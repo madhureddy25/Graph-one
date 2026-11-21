@@ -33,6 +33,10 @@ _LEGAL = {
     "inc", "incorporated", "llc", "l.l.c", "ltd", "limited", "corp", "corporation", "co", "company", "gmbh",
     "sas", "sa", "ag", "bv", "plc", "pbc", "pte", "pty", "oy", "ab", "srl", "spa", "kk", "lp", "llp", "holdings",
 }
+# Words that are part of a business name in practice ("The Token Company"), so the
+# display name keeps them even though matching keys still ignore them.
+_DISPLAY_KEEP = {"co", "company", "holdings"}
+_JOINERS = {"and", "the", "a", "an", "of"}
 _WEAK = {"ai", "labs", "lab", "technologies", "technology", "tech", "hq", "app", "io", "systems", "software",
          "inc", "group", "the", "platform", "studio", "studios"}
 
@@ -46,7 +50,7 @@ def tokens(name: str) -> list[str]:
     s = _ascii_fold(name).casefold().replace("&", " and ").replace("+", " plus ")
     s = re.sub(r"\(.*?\)", " ", s)                 # "Foo (YC W24)"
     toks = re.findall(r"[a-z0-9]+", s.replace(".", " ").replace("'", ""))
-    while toks and toks[-1] in _LEGAL:            # strip trailing legal suffixes
+    while len(toks) > 1 and toks[-1] in _LEGAL and toks[-2] not in _JOINERS:  # strip trailing legal suffixes
         toks.pop()
     if toks and toks[0] == "the" and len(toks) > 1:
         toks = toks[1:]
@@ -69,8 +73,11 @@ def clean_display(name: str) -> str:
     s = re.sub(r"\s*\((?:yc|s|w|f)\s*\d{2,4}\)\s*$", "", s, flags=re.I)
     while True:
         m = re.search(r",?\s+([A-Za-z.]+)\.?$", s)
-        if m and m.group(1).lower().strip(".") in _LEGAL and len(s) > len(m.group(0)) + 1:
-            s = s[: m.start()].rstrip(" ,")
+        suffix = m.group(1).lower().strip(".") if m else ""
+        rest = s[: m.start()].rstrip(" ,") if m else ""
+        last = rest.split()[-1].lower() if rest.split() else ""
+        if m and suffix in _LEGAL and suffix not in _DISPLAY_KEEP and len(rest) > 1                 and last not in _JOINERS and last != "&":
+            s = rest
         else:
             return s
 
@@ -133,7 +140,7 @@ class EntityResolver:
     # ------------------------------------------------------------- resolve
     def resolve(self, raw: str, *, website: str | None = None, record_type: str = "",
                 source_url: str | None = None) -> Resolution:
-        res = self._resolve(raw, domain_of(website) if website else None)
+        res = self._resolve(raw, self._identity_domain(website))
         self.log.append({"raw": raw, "canonical": res.canonical, "method": res.method, "score": round(res.score, 3),
                          "recordType": record_type, "sourceUrl": source_url})
         return res
@@ -141,6 +148,23 @@ class EntityResolver:
     _GENERIC_DOMAINS = ("github.com", "github.io", "vercel.app", "netlify.app", "herokuapp.com", "notion.site",
                         "producthunt.com", "ycombinator.com", "google.com", "apple.com", "chrome.google.com",
                         "huggingface.co", "medium.com", "substack.com", "linkedin.com", "twitter.com", "x.com")
+
+    # Paths where a platform hosts things its *users* made: a product at
+    # claude.ai/artifact/... is by its author, not by Anthropic.
+    _USER_CONTENT = re.compile(
+        r"^https?://(?:www\.)?(?:claude\.ai/(?:artifact|public|share)|chatgpt\.com/(?:g|share|canvas)|"
+        r"chat\.openai\.com/(?:g|share)|gemini\.google\.com/(?:share|gem)|g\.co/gemini|"
+        r"poe\.com/|copilot\.microsoft\.com/shares)", re.I)
+    _USER_CONTENT_HOSTS = ("claude.site", "lovable.app", "replit.app", "repl.co", "bolt.host", "v0.dev",
+                           "glitch.me", "streamlit.app", "gradio.live", "pages.dev", "web.app", "firebaseapp.com")
+
+    def _identity_domain(self, website: str | None) -> str | None:
+        if not website or self._USER_CONTENT.match(website.strip()):
+            return None
+        d = domain_of(website)
+        if d and any(d == h or d.endswith("." + h) for h in self._USER_CONTENT_HOSTS):
+            return None
+        return d
 
     def _resolve(self, raw: str, domain: str | None) -> Resolution:
         raw = (raw or "").strip()

@@ -134,6 +134,12 @@ async def _reextract(ctx: Context, args) -> None:
     print(f"  news re-extracted with LLM: {n}/{total} pending records")
 
 
+async def _reresolve(ctx: Context, args) -> None:
+    from .sources.reresolve import reresolve_all
+    counts = await reresolve_all(ctx)
+    print("  re-resolved: " + ", ".join(f"{k}={v}" for k, v in counts.items()))
+
+
 def main(argv: list[str] | None = None) -> None:
     setup_logging()
     ap = argparse.ArgumentParser(prog="graphone")
@@ -154,6 +160,7 @@ def main(argv: list[str] | None = None) -> None:
     for a in ("startups", "products", "papers"):
         al.add_argument(f"--{a}", type=int)
     sub.add_parser("llm-check")
+    sub.add_parser("reresolve", help="re-run entity resolution on all saved records (after resolver fixes)")
     sub.add_parser("reextract", help="re-run LLM extraction on records saved while all tiers were out of quota")
     args = ap.parse_args(argv)
 
@@ -165,6 +172,8 @@ def main(argv: list[str] | None = None) -> None:
         asyncio.run(_with_context(_phase2, args))
     elif args.cmd == "export":
         asyncio.run(_export(args))
+    elif args.cmd == "reresolve":
+        asyncio.run(_with_context(_reresolve, args))
     elif args.cmd == "reextract":
         asyncio.run(_with_context(_reextract, args))
     elif args.cmd == "llm-check":

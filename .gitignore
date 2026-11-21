@@ -13,3 +13,4 @@ graphone-pipeline.zip
 _private/
 
 output/*.log
+output/backup_*/

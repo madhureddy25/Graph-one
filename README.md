@@ -43,6 +43,7 @@ python -m graphone llm-check           # pings each configured LLM tier
 python -m graphone phase1              # 1,000 startups + 1,000 products + 1,000 papers  (~15–30 min)
 python -m graphone phase2              # fresh news + jobs (run again an hour later: see "freshness")
 python -m graphone reextract           # backfill LLM fields on news saved while every LLM tier was out of quota
+python -m graphone reresolve           # re-run entity resolution on saved records after a resolver change (backs up first)
 python -m graphone export              # output/*.csv, *.jsonl and output/graphone_output.xlsx (6 tabs)
 ```
 

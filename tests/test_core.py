@@ -104,6 +104,32 @@ def test_resolver_guards(resolver):
     assert resolver.resolve("ZETA ROBOTICS LLC").canonical == a == "Zeta Robotics"
 
 
+@pytest.mark.parametrize("raw,canon", [
+    ("The Company Company", "The Company Company"),   # "Company" is part of the name, not a legal suffix
+    ("Hickory & Company", "Hickory & Company"),       # stripping would leave a dangling "&"
+    ("The Token Company", "The Token Company"),
+    ("PerfectBit, Inc.", "PerfectBit"),               # real legal suffixes are still removed
+    ("Orikata Bio PBC", "Orikata Bio"),
+])
+def test_display_name_keeps_meaningful_words(raw, canon):
+    assert EntityResolver().resolve(raw).canonical == canon
+
+
+@pytest.mark.parametrize("url", [
+    "https://claude.ai/artifact/XmWGFtQPgn8aJvU193Ksf8",
+    "https://chatgpt.com/g/g-abc123-my-gpt",
+    "https://claude.site/artifacts/1234",
+])
+def test_user_content_on_seed_domain_is_not_that_company(resolver, url):
+    # a product hosted on claude.ai / chatgpt.com is made by its author, not by Anthropic / OpenAI
+    r = resolver.resolve("Gigantua", website=url, record_type="PRODUCT")
+    assert r.canonical == "Gigantua" and not r.method.startswith("seed")
+
+
+def test_company_own_site_still_matches_by_domain(resolver):
+    assert resolver.resolve("Claude", website="https://claude.ai/").canonical == "Anthropic"
+
+
 # ------------------------------------------------------------------ chunking / grounding
 def test_fit_to_budget_keeps_dense_content_and_respects_budget():
     filler = "\n\n".join(f"This is generic filler paragraph number {i} with nothing notable." for i in range(400))

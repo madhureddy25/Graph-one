@@ -98,6 +98,14 @@ class SqliteStateStore:
         if rows:
             await asyncio.to_thread(op)
 
+    async def clear_mappings(self) -> None:
+        await self._run("DELETE FROM mappings")
+
+    async def get_raw_mappings(self, record_type: str) -> list[dict]:
+        rows = await self._run("SELECT raw, canonical, source_url FROM mappings WHERE record_type=? ORDER BY rowid",
+                               (record_type,))
+        return [dict(zip(("raw", "canonical", "sourceUrl"), r)) for r in rows]
+
     async def get_mappings(self) -> list[dict]:
         rows = await self._run("SELECT raw, canonical, method, score, record_type, source_url FROM mappings "
                                "ORDER BY canonical, raw")
