@@ -1,0 +1,11 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    { "label": "GraphOne: 1. Run tests",       "type": "shell", "command": "python -m pytest -q", "group": "test" },
+    { "label": "GraphOne: 2. Check LLM keys",  "type": "shell", "command": "python -m graphone llm-check" },
+    { "label": "GraphOne: 3. Phase I (startups, products, papers)", "type": "shell", "command": "python -m graphone phase1" },
+    { "label": "GraphOne: 4. Phase II (fresh news + jobs)",         "type": "shell", "command": "python -m graphone phase2" },
+    { "label": "GraphOne: 5. Export (CSV / JSONL / XLSX)",          "type": "shell", "command": "python -m graphone export" },
+    { "label": "GraphOne: 5b. Export + upload to Google Sheets",    "type": "shell", "command": "python -m graphone export --sheets" }
+  ]
+}

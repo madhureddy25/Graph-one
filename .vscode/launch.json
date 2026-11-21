@@ -1,0 +1,10 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    { "name": "Debug Phase I (small: 50 each)", "type": "debugpy", "request": "launch", "module": "graphone",
+      "args": ["phase1", "--startups", "50", "--products", "50", "--papers", "50"], "cwd": "${workspaceFolder}",
+      "env": { "PYTHONPATH": "${workspaceFolder}/src" } },
+    { "name": "Debug Phase II", "type": "debugpy", "request": "launch", "module": "graphone",
+      "args": ["phase2"], "cwd": "${workspaceFolder}", "env": { "PYTHONPATH": "${workspaceFolder}/src" } }
+  ]
+}

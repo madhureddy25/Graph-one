@@ -1,0 +1,26 @@
+# Core
+aiohttp>=3.9
+feedparser>=6.0
+trafilatura>=1.8
+beautifulsoup4>=4.12
+lxml>=5.0
+rapidfuzz>=3.6
+python-dateutil>=2.9
+python-dotenv>=1.0
+pydantic>=2.6
+openpyxl>=3.1
+
+# Google Sheets export (optional; only for `export --sheets`)
+gspread>=6.0
+google-auth>=2.28
+
+# JS rendering / anti-bot escalation tier (optional but recommended)
+#   after install run:  playwright install chromium
+playwright>=1.44
+
+# Distributed state backend (optional; STATE_BACKEND=redis)
+redis>=5.0
+
+# Docs + tests
+markdown>=3.5
+pytest>=8.0

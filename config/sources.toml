@@ -1,0 +1,77 @@
+# Source registry. Adding a feed, ATS board or company here needs no code change.
+
+[startups.yc]
+name = "Y Combinator Directory"
+# Community mirror of YC's public directory index (refreshed daily). Every record
+# links to — and is verified against — its live ycombinator.com/companies page.
+index_url = "https://yc-oss.github.io/api/companies/all.json"
+verify_live_pages = true
+
+[products.show_hn]
+name = "Hacker News (Show HN)"
+api = "https://hn.algolia.com/api/v1/search_by_date"
+queries = ["AI", "LLM", "GPT", "agent", "AI-powered", "machine learning", "Claude", "chatbot", "copilot", "RAG", "voice AI", "AI assistant"]
+min_points = 3
+
+[products.product_hunt]   # used only if PRODUCT_HUNT_TOKEN is set
+name = "Product Hunt"
+topic = "artificial-intelligence"
+
+[papers.huggingface]
+name = "Hugging Face Papers"   # Papers with Code's successor (PwC redirects here)
+api = "https://huggingface.co/api/daily_papers"
+max_days_back = 365
+
+# ----------------------------------------------------------------- Phase II: news
+[[news]]
+name = "TechCrunch AI"
+feed = "https://techcrunch.com/category/artificial-intelligence/feed/"
+
+[[news]]
+name = "VentureBeat AI"
+feed = "https://venturebeat.com/category/ai/feed/"
+
+[[news]]
+name = "The Verge AI"
+feed = "https://www.theverge.com/rss/ai-artificial-intelligence/index.xml"
+
+[[news]]
+name = "MIT Technology Review AI"
+feed = "https://www.technologyreview.com/topic/artificial-intelligence/feed"
+
+[[news]]
+name = "Ars Technica AI"
+feed = "https://arstechnica.com/ai/feed/"
+
+# Extra sources (enable by uncommenting)
+# [[news]]
+# name = "MarkTechPost"
+# feed = "https://www.marktechpost.com/feed/"
+
+# ----------------------------------------------------------------- Phase II: jobs
+# Five boards. ATS boards are polled per AI company via their public JSON APIs.
+[jobs.greenhouse]
+name = "Greenhouse"
+companies = ["anthropic", "scaleai", "databricks", "xai", "deepmind", "stabilityai", "runwayml", "togetherai",
+             "cerebrassystems", "fireworksai", "coreweave", "figureai", "lambdalabs", "anyscale",
+             "huggingface", "characterai", "sambanovasystems", "inflectionai", "assemblyai", "pathai", "abridge"]
+
+[jobs.lever]
+name = "Lever"
+companies = ["mistral", "weightsandbiases", "hive", "synthesia", "jasper", "insitro", "dataiku", "shieldai",
+             "aurorainnovation", "nuro", "zoox", "covariant", "tempus"]
+
+[jobs.ashby]
+name = "Ashby"
+companies = ["openai", "cohere", "perplexity", "elevenlabs", "replit", "langchain", "modal", "sierra", "harvey",
+             "cursor", "pinecone", "baseten", "llamaindex", "poolside", "decagon", "suno", "writer",
+             "cognition", "hebbia", "luma-ai", "pika", "glean", "runway", "together-ai", "anysphere", "physical-intelligence"]
+
+[jobs.remoteok]
+name = "RemoteOK"
+api = "https://remoteok.com/api"
+
+[jobs.remotive]
+name = "Remotive"
+api = "https://remotive.com/api/remote-jobs"
+searches = ["ai", "machine learning", "llm", "data science"]

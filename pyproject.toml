@@ -1,0 +1,19 @@
+[project]
+name = "graphone-pipeline"
+version = "1.0.0"
+description = "Fault-tolerant AI ecosystem ingestion pipeline (crawler, LLM orchestrator, entity resolver)"
+requires-python = ">=3.11"
+
+[project.scripts]
+graphone = "graphone.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
