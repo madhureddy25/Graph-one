@@ -38,7 +38,7 @@ Fill in `.env`. Every key is free:
 Every LLM key is optional. Tiers without a key are skipped. With no keys, the pipeline runs in rules-only mode and marks records as such.
 
 ```bash
-python -m pytest -q                    # 47 offline tests (dates, resolver, chunking, fallback chain, fetcher, news e2e)
+python -m pytest -q                    # 56 offline tests (dates, resolver, chunking, fallback chain, fetcher, news e2e)
 python -m graphone llm-check           # pings each configured LLM tier
 python -m graphone phase1              # 1,000 startups + 1,000 products + 1,000 papers  (~15–30 min)
 python -m graphone phase2              # fresh news + jobs (run again an hour later: see "freshness")
