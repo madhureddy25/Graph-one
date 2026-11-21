@@ -16,7 +16,7 @@ Asynchronous, fault-tolerant ingestion pipeline for the AI ecosystem:
 Requires **Python 3.11+**.
 
 ```bash
-git clone <this repo> && cd graphone-pipeline
+git clone https://github.com/madhureddy25/Graph-one.git && cd Graph-one
 python -m venv .venv
 # Windows: .venv\Scripts\activate      macOS/Linux: source .venv/bin/activate
 pip install -r requirements.txt
